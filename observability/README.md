@@ -56,11 +56,16 @@ kubectl -n observability get pods -w
 
 ## Access Grafana
 
+Grafana is exposed via Traefik ingress. Add the entry to your hosts file (see root [README.md](../README.md) § Ingress and DNS), then open:
+
+<http://grafana.fhassis.top> — log in as `admin` / `admin`.
+
+If you need to bypass ingress (e.g., while Traefik is not yet up):
+
 ```bash
 kubectl -n observability port-forward svc/grafana 3000:80
+# → http://localhost:3000
 ```
-
-Open <http://localhost:3000> — log in as `admin` / `admin`.
 
 Go to **Connections → Data sources** to confirm three healthy datasources: Prometheus, Loki, Tempo.
 
@@ -150,7 +155,7 @@ Migration path: **SOPS + [age](https://github.com/FiloSottile/age) + [`helm-secr
 
 The base values are environment-agnostic. Likely additions per environment (out of scope for now):
 
-- Ingress + TLS for Grafana.
+- TLS for the Grafana ingress (cert-manager + Let's Encrypt).
 - Real Grafana admin password (see **Secrets** above).
 - Larger PVC sizes and longer Prometheus retention.
 - `alertmanager.enabled: true` in prometheus.values.yaml once alerting rules exist.

@@ -20,6 +20,11 @@ dex:
 
 server:
   replicas: 1
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - argocd.fhassis.top
 
 repoServer:
   replicas: 1

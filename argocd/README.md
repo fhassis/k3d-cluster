@@ -34,16 +34,22 @@ kubectl -n argocd rollout status deployment/argocd-server
 
 ## Access
 
+ArgoCD is exposed via Traefik ingress. Add the entry to your hosts file (see root [README.md](../README.md) § Ingress and DNS), then open:
+
+<http://argocd.fhassis.top> — log in as `admin` / `<password below>`.
+
 ```bash
 # Get the auto-generated admin password
 kubectl -n argocd get secret argocd-initial-admin-secret \
   -o jsonpath="{.data.password}" | base64 -d && echo
-
-# Port-forward the UI
-kubectl -n argocd port-forward svc/argocd-server 8080:80
 ```
 
-Open <http://localhost:8080> — log in as `admin` / `<password from above>`.
+If you need to bypass ingress:
+
+```bash
+kubectl -n argocd port-forward svc/argocd-server 8080:80
+# → http://localhost:8080
+```
 
 ## Bootstrap GitOps
 
@@ -83,7 +89,7 @@ helm upgrade argocd argo/argo-cd \
 
 ## Adapting for VPS / 5-node k3s
 
-- Ingress + TLS: flip `configs.params.server.insecure` to `false` and add an Ingress.
+- TLS: flip `configs.params.server.insecure` to `false` and add TLS to the existing ingress (cert-manager + Let's Encrypt).
 - SSO: `dex.enabled: true` + OIDC config for multi-user access.
 - HA: increase `controller.replicas` and enable `redis-ha.enabled: true`.
 - Pin `targetRevision` in all Application manifests to a specific chart version for production.

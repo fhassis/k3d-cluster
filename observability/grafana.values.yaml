@@ -7,6 +7,12 @@
 # dev-only: replace per environment (see README "Secrets" section)
 adminPassword: admin
 
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - grafana.fhassis.top
+
 persistence:
   enabled: true
   size: 2Gi
