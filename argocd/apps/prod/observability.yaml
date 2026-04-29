@@ -1,16 +1,9 @@
-# Observability stack — ArgoCD Applications
+# Observability stack — prod environment
 #
-# Five releases, deployed with sync waves to respect startup order:
-#   Wave 0 — backends (Prometheus, Loki, Tempo): no inter-dependencies
-#   Wave 1 — Grafana: pre-wired datasources require backends to be reachable
-#   Wave 2 — k8s-monitoring: Alloy must remote-write to running backends
-#
-# All five use the multi-source pattern:
-#   source[0] — Helm chart from its upstream Helm repo
-#   source[1] — this git repo, referenced as $values, provides the values file
-#
-# targetRevision uses "*" (latest) for convenience in dev.
-# Pin to a specific chart version (e.g. "27.3.1") for production.
+# Same structure as dev. Differences from dev:
+#   - Chart versions pinned (replace "*" with specific versions before deploying)
+#   - Grafana ingress uses real domain + TLS secret (wildcard-tls)
+#   - k8s-monitoring cluster name set to prod
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -115,6 +108,7 @@ spec:
       helm:
         valueFiles:
           - $values/observability/grafana.values.yaml
+          - $values/observability/grafana.values.prod.yaml
     - repoURL: https://github.com/fhassis/k3d-cluster.git
       targetRevision: HEAD
       ref: values
@@ -144,6 +138,7 @@ spec:
       helm:
         valueFiles:
           - $values/observability/k8s-monitoring.values.yaml
+          - $values/observability/k8s-monitoring.values.prod.yaml
     - repoURL: https://github.com/fhassis/k3d-cluster.git
       targetRevision: HEAD
       ref: values

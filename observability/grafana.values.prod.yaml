@@ -1,0 +1,9 @@
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - grafana.fhassis.top
+  tls:
+    - secretName: wildcard-tls
+      hosts:
+        - grafana.fhassis.top

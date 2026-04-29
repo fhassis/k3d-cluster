@@ -11,9 +11,6 @@
 # add auth blocks (see README). Skip installing the backend charts.
 # App workloads need no changes.
 
-cluster:
-  name: dev
-
 # ============================================================
 # Destinations (MAP — each key is the destination name)
 # ============================================================

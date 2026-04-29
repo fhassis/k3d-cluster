@@ -1,0 +1,156 @@
+# Observability stack — dev environment
+#
+# Five releases, deployed with sync waves to respect startup order:
+#   Wave 0 — backends (Prometheus, Loki, Tempo): no inter-dependencies
+#   Wave 1 — Grafana: pre-wired datasources require backends to be reachable
+#   Wave 2 — k8s-monitoring: Alloy must remote-write to running backends
+#
+# Each release stacks a base values file with a dev overlay.
+# targetRevision uses "*" (latest chart) — pin to a semver for production.
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  sources:
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: prometheus
+      targetRevision: "*"
+      helm:
+        valueFiles:
+          - $values/observability/prometheus.values.yaml
+    - repoURL: https://github.com/fhassis/k3d-cluster.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  sources:
+    - repoURL: https://grafana-community.github.io/helm-charts
+      chart: loki
+      targetRevision: "*"
+      helm:
+        valueFiles:
+          - $values/observability/loki.values.yaml
+    - repoURL: https://github.com/fhassis/k3d-cluster.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tempo
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  sources:
+    - repoURL: https://grafana-community.github.io/helm-charts
+      chart: tempo
+      targetRevision: "*"
+      helm:
+        valueFiles:
+          - $values/observability/tempo.values.yaml
+    - repoURL: https://github.com/fhassis/k3d-cluster.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  sources:
+    - repoURL: https://grafana-community.github.io/helm-charts
+      chart: grafana
+      targetRevision: "*"
+      helm:
+        valueFiles:
+          - $values/observability/grafana.values.yaml
+          - $values/observability/grafana.values.dev.yaml
+    - repoURL: https://github.com/fhassis/k3d-cluster.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: k8s-monitoring
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: k8s-monitoring
+      targetRevision: "*"
+      helm:
+        valueFiles:
+          - $values/observability/k8s-monitoring.values.yaml
+          - $values/observability/k8s-monitoring.values.dev.yaml
+    - repoURL: https://github.com/fhassis/k3d-cluster.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
