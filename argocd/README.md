@@ -22,7 +22,9 @@ This means: edit a values file, push, ArgoCD reconciles — no manual `helm upgr
 # Add Helm repo (once per machine)
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
+```
 
+```bash
 # Create namespace and install
 kubectl create namespace argocd
 helm install argocd argo/argo-cd \
@@ -36,7 +38,7 @@ kubectl -n argocd rollout status deployment/argocd-server
 
 ArgoCD is exposed via Traefik ingress. Add the entry to your hosts file (see root [README.md](../README.md) § Ingress and DNS), then open:
 
-<http://argocd.fhassis.top> — log in as `admin` / `<password below>`.
+<http://argocd.localhost:8080> — log in as `admin` / `<password below>`.
 
 ```bash
 # Get the auto-generated admin password
@@ -47,8 +49,8 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 If you need to bypass ingress:
 
 ```bash
-kubectl -n argocd port-forward svc/argocd-server 8080:80
-# → http://localhost:8080
+kubectl -n argocd port-forward svc/argocd-server 8888:80
+# → http://localhost:8888
 ```
 
 ## Bootstrap GitOps

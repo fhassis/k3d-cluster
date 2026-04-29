@@ -23,8 +23,7 @@ server:
   ingress:
     enabled: true
     ingressClassName: traefik
-    hosts:
-      - argocd.fhassis.top
+    hostname: argocd.localhost
 
 repoServer:
   replicas: 1

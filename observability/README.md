@@ -58,7 +58,7 @@ kubectl -n observability get pods -w
 
 Grafana is exposed via Traefik ingress. Add the entry to your hosts file (see root [README.md](../README.md) § Ingress and DNS), then open:
 
-<http://grafana.fhassis.top> — log in as `admin` / `admin`.
+<http://grafana.localhost:8080> — log in as `admin` / `admin`.
 
 If you need to bypass ingress (e.g., while Traefik is not yet up):
 

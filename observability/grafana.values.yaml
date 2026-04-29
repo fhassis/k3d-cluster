@@ -11,7 +11,7 @@ ingress:
   enabled: true
   ingressClassName: traefik
   hosts:
-    - grafana.fhassis.top
+    - grafana.localhost
 
 persistence:
   enabled: true

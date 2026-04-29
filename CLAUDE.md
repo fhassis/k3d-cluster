@@ -35,8 +35,8 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
   -o jsonpath="{.data.password}" | base64 -d && echo
 
 # Access UI
-kubectl -n argocd port-forward svc/argocd-server 8080:80
-# → http://localhost:8080  (admin / <password above>)
+kubectl -n argocd port-forward svc/argocd-server 8888:80
+# → http://localhost:8888  (admin / <password above>)
 
 # Watch sync status
 kubectl -n argocd get applications -w
