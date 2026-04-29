@@ -5,9 +5,10 @@ GitOps controller running in the `argocd` namespace. Manages all Application dep
 ## Architecture
 
 ```
-argocd/bootstrap.yaml     ← apply once manually
-  └── argocd/apps/        ← ArgoCD watches this directory
-        observability.yaml   (5 Applications, sync waves 0→1→2)
+argocd/bootstrap.dev.yaml   ← apply once manually (prod: bootstrap.prod.yaml)
+  └── argocd/apps/dev/      ← Kustomize overlay ArgoCD watches
+        kustomization.yaml    patches base/ apps with dev-specific values
+  └── argocd/apps/base/     ← 5 Application manifests, shared across envs
 ```
 
 Each Application uses the **multi-source** pattern (ArgoCD ≥ 2.6):
@@ -57,7 +58,7 @@ kubectl -n argocd port-forward svc/argocd-server 8888:80
 
 ```bash
 # Apply the root Application — ArgoCD takes over from here
-kubectl apply -f argocd/bootstrap.yaml
+kubectl apply -f argocd/bootstrap.dev.yaml
 ```
 
 ArgoCD discovers `argocd/apps/` and deploys all Applications automatically. Watch progress:

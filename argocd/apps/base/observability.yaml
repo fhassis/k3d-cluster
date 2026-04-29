@@ -1,9 +1,13 @@
-# Observability stack — prod environment
+# Observability stack — base Application manifests
 #
-# Same structure as dev. Differences from dev:
-#   - Chart versions pinned (replace "*" with specific versions before deploying)
-#   - Grafana ingress uses real domain + TLS secret (wildcard-tls)
-#   - k8s-monitoring cluster name set to prod
+# Five releases, deployed with sync waves to respect startup order:
+#   Wave 0 — backends (Prometheus, Loki, Tempo): no inter-dependencies
+#   Wave 1 — Grafana: pre-wired datasources require backends to be reachable
+#   Wave 2 — k8s-monitoring: Alloy must remote-write to running backends
+#
+# Env-specific values (ingress, cluster name) are patched in by the
+# dev/ and prod/ Kustomize overlays.
+# targetRevision uses "*" (latest chart) — pin to a semver for production.
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -108,7 +112,6 @@ spec:
       helm:
         valueFiles:
           - $values/observability/grafana.values.yaml
-          - $values/observability/grafana.values.prod.yaml
     - repoURL: https://github.com/fhassis/k3d-cluster.git
       targetRevision: HEAD
       ref: values
@@ -138,7 +141,6 @@ spec:
       helm:
         valueFiles:
           - $values/observability/k8s-monitoring.values.yaml
-          - $values/observability/k8s-monitoring.values.prod.yaml
     - repoURL: https://github.com/fhassis/k3d-cluster.git
       targetRevision: HEAD
       ref: values

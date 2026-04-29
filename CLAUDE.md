@@ -28,7 +28,7 @@ helm install argocd argo/argo-cd -n argocd -f argocd/argocd.values.yaml
 kubectl -n argocd rollout status deployment/argocd-server
 
 # Bootstrap GitOps (run once — ArgoCD takes over from here)
-kubectl apply -f argocd/bootstrap.yaml
+kubectl apply -f argocd/bootstrap.dev.yaml
 
 # Get admin password
 kubectl -n argocd get secret argocd-initial-admin-secret \
@@ -72,7 +72,7 @@ git push
         └── ArgoCD applies Helm release with updated values
 ```
 
-`argocd/bootstrap.yaml` is a single ArgoCD Application applied once manually. It points ArgoCD at `argocd/apps/`. Every manifest added to `argocd/apps/` is automatically discovered and managed — no further manual `kubectl apply` needed.
+`argocd/bootstrap.dev.yaml` is a single ArgoCD Application applied once manually. It points ArgoCD at `argocd/apps/dev/` (a Kustomize overlay). Every manifest added to the base or overlays is automatically discovered and managed — no further manual `kubectl apply` needed.
 
 ### Multi-source Helm pattern
 

@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/sources/0/helm/valueFiles/-
+        value: $values/observability/grafana.values.dev.yaml
+    target:
+      kind: Application
+      name: grafana
+  - patch: |-
+      - op: add
+        path: /spec/sources/0/helm/valueFiles/-
+        value: $values/observability/k8s-monitoring.values.dev.yaml
+    target:
+      kind: Application
+      name: k8s-monitoring
