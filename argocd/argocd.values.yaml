@@ -27,6 +27,8 @@ server:
 
 repoServer:
   replicas: 1
+  livenessProbe:
+    timeoutSeconds: 5
 
 applicationSet:
   replicas: 1

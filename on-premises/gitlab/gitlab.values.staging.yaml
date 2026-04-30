@@ -1,0 +1,65 @@
+# GitLab staging overlay — *.staging domain, TLS, dev-level resource limits.
+
+global:
+  hosts:
+    domain: staging
+    https: true
+    gitlab:
+      name: gitlab.staging
+    registry:
+      name: registry.staging
+    pages:
+      name: pages.staging
+  ingress:
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    tls:
+      enabled: true
+      # secretName intentionally absent — Traefik uses TLSStore default (kube-system/wildcard-tls)
+
+gitlab:
+  webservice:
+    resources:
+      requests:
+        cpu: "300m"
+        memory: "1.5Gi"
+      limits:
+        cpu: "1500m"
+        memory: "3Gi"
+  gitaly:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "200Mi"
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+  workhorse:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+      limits:
+        cpu: "500m"
+        memory: "500Mi"
+
+postgresql:
+  primary:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+redis:
+  master:
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "64Mi"
+      limits:
+        cpu: "200m"
+        memory: "256Mi"

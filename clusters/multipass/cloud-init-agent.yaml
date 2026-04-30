@@ -1,0 +1,24 @@
+#cloud-config
+# node2 / node3 — k3s agents
+# Before launching: fill in SERVER_IP and CLUSTER_TOKEN from node1, then set NODE_NAME.
+#
+# Usage (repeat for node2 and node3, changing --name each time):
+#   multipass launch --name node2 --cpus 2 --memory 4G --disk 30G \
+#     --cloud-init clusters/multipass/cloud-init-agent.yaml 26.04
+#
+# Placeholders to replace before use:
+#   NODE_NAME    — node2 or node3
+#   SERVER_IP    — output of: multipass exec node1 -- hostname -I | awk '{print $1}'
+#   CLUSTER_TOKEN — output of: multipass exec node1 -- sudo cat /var/lib/rancher/k3s/server/node-token
+
+hostname: NODE_NAME
+
+packages:
+  - open-iscsi
+
+runcmd:
+  - modprobe iscsi_tcp
+  - echo 'iscsi_tcp' > /etc/modules-load.d/iscsi.conf
+  - systemctl enable iscsid && systemctl start iscsid
+  - mkdir -p /data/longhorn
+  - curl -sfL https://get.k3s.io | K3S_URL=https://SERVER_IP:6443 K3S_TOKEN=CLUSTER_TOKEN sh -

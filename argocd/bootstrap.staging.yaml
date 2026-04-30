@@ -1,0 +1,28 @@
+# Bootstrap Application (staging) — apply this once after ArgoCD is installed
+# on the Multipass VM cluster.
+#
+# Pre-requisites (run before applying this file):
+#   1. Load the self-signed wildcard cert as a Secret:
+#      kubectl create secret tls wildcard-tls --cert=wildcard.crt --key=wildcard.key -n kube-system
+#   2. Install ArgoCD (see argocd/README.md)
+#
+# Usage:
+#   kubectl apply -f argocd/bootstrap.staging.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/fhassis/k8s-cluster.git
+    targetRevision: HEAD
+    path: argocd/apps/staging
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,23 @@
+# XWiki staging overlay — *.staging domain, TLS, dev-level resource limits.
+
+resources:
+  requests:
+    cpu: "200m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+ingress:
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  hosts:
+    - host: xwiki.staging
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - xwiki.staging
+      # secretName intentionally absent — Traefik uses TLSStore default (kube-system/wildcard-tls)

@@ -12,16 +12,6 @@ ports:
   - port: 8443:443
     nodeFilters:
       - loadbalancer
-volumes:
-  # Shared host directory mounted into every node at /data/longhorn.
-  # Because all k3d nodes are Docker containers on the same WSL host, they all
-  # see the same filesystem — so static PVs using hostPath /data/longhorn/*
-  # require no nodeAffinity: any pod on any node reaches the same data.
-  # This simulates Longhorn's detach/reattach mobility without needing iSCSI.
-  # Run: mkdir -p ~/k3d-storage  before creating the cluster.
-  - volume: "${HOME}/k3d-storage:/data/longhorn"
-    nodeFilters:
-      - all
 options:
   k3d:
     wait: true

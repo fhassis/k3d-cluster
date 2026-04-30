@@ -11,11 +11,11 @@
 #   Wave 4 — GitLab (heaviest, ~8 GB RAM; starts last to avoid node pressure)
 #
 # Storage: all apps use storageClass: longhorn.
-#   Dev  → shared-hostPath simulation (storage/pvs.yaml, no nodeAffinity)
-#   Prod → real Longhorn block storage (deployed at wave -1)
+#   Dev            → local-path provisioner (k3s built-in, no config needed)
+#   Staging / Prod → real Longhorn block storage (deployed at wave -1)
 #
 # Env-specific values (ingress host, TLS, resource limits) are patched in by
-# the dev/ and prod/ Kustomize overlays.
+# the staging/ and prod/ Kustomize overlays.
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -33,7 +33,7 @@ spec:
       helm:
         valueFiles:
           - $values/on-premises/jenkins/jenkins.values.yaml
-    - repoURL: https://github.com/fhassis/k3d-cluster.git
+    - repoURL: https://github.com/fhassis/k8s-cluster.git
       targetRevision: HEAD
       ref: values
   destination:
@@ -62,7 +62,7 @@ spec:
       helm:
         valueFiles:
           - $values/on-premises/nexus/nexus.values.yaml
-    - repoURL: https://github.com/fhassis/k3d-cluster.git
+    - repoURL: https://github.com/fhassis/k8s-cluster.git
       targetRevision: HEAD
       ref: values
   destination:
@@ -91,7 +91,7 @@ spec:
       helm:
         valueFiles:
           - $values/on-premises/xwiki/xwiki.values.yaml
-    - repoURL: https://github.com/fhassis/k3d-cluster.git
+    - repoURL: https://github.com/fhassis/k8s-cluster.git
       targetRevision: HEAD
       ref: values
   destination:
@@ -120,7 +120,7 @@ spec:
       helm:
         valueFiles:
           - $values/on-premises/gitlab/gitlab.values.yaml
-    - repoURL: https://github.com/fhassis/k3d-cluster.git
+    - repoURL: https://github.com/fhassis/k8s-cluster.git
       targetRevision: HEAD
       ref: values
   destination:

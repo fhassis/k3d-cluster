@@ -11,7 +11,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/fhassis/k3d-cluster.git
+    repoURL: https://github.com/fhassis/k8s-cluster.git
     targetRevision: HEAD
     path: argocd/apps/prod
   destination:

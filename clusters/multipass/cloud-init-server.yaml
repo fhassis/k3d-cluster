@@ -1,0 +1,21 @@
+#cloud-config
+# node1 — k3s server
+# Usage: multipass launch --name node1 --cpus 2 --memory 4G --disk 30G \
+#          --cloud-init clusters/multipass/cloud-init-server.yaml 26.04
+#
+# After launch, get the node IP and token for the agent cloud-init:
+#   multipass exec node1 -- hostname -I | awk '{print $1}'
+#   multipass exec node1 -- sudo cat /var/lib/rancher/k3s/server/node-token
+
+hostname: node1
+
+packages:
+  - open-iscsi
+
+runcmd:
+  - modprobe iscsi_tcp
+  - echo 'iscsi_tcp' > /etc/modules-load.d/iscsi.conf
+  - systemctl enable iscsid && systemctl start iscsid
+  - mkdir -p /data/longhorn
+  - curl -sfL https://get.k3s.io | K3S_TOKEN=CLUSTER_TOKEN sh -s - server
+  - curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash

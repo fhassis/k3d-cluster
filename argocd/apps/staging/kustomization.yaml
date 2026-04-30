@@ -2,49 +2,50 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base
-  - dev-storage.yaml   # dev-only: shared-hostPath StorageClass + static PVs (wave -1)
+  - certificates.yaml   # staging: Traefik TLSStore (wildcard-tls must be pre-loaded)
+  - longhorn.yaml       # staging: Longhorn block storage operator (wave -1)
 patches:
   # Observability env-specific values
   - patch: |-
       - op: add
         path: /spec/sources/0/helm/valueFiles/-
-        value: $values/observability/grafana.values.dev.yaml
+        value: $values/observability/grafana.values.staging.yaml
     target:
       kind: Application
       name: grafana
   - patch: |-
       - op: add
         path: /spec/sources/0/helm/valueFiles/-
-        value: $values/observability/k8s-monitoring.values.dev.yaml
+        value: $values/observability/k8s-monitoring.values.staging.yaml
     target:
       kind: Application
       name: k8s-monitoring
-  # On-premises tools — dev env-specific values (ingress, resource limits)
+  # On-premises tools — staging env-specific values (ingress, TLS, resource limits)
   - patch: |-
       - op: add
         path: /spec/sources/0/helm/valueFiles/-
-        value: $values/on-premises/jenkins/jenkins.values.dev.yaml
+        value: $values/on-premises/jenkins/jenkins.values.staging.yaml
     target:
       kind: Application
       name: jenkins
   - patch: |-
       - op: add
         path: /spec/sources/0/helm/valueFiles/-
-        value: $values/on-premises/nexus/nexus.values.dev.yaml
+        value: $values/on-premises/nexus/nexus.values.staging.yaml
     target:
       kind: Application
       name: nexus
   - patch: |-
       - op: add
         path: /spec/sources/0/helm/valueFiles/-
-        value: $values/on-premises/xwiki/xwiki.values.dev.yaml
+        value: $values/on-premises/xwiki/xwiki.values.staging.yaml
     target:
       kind: Application
       name: xwiki
   - patch: |-
       - op: add
         path: /spec/sources/0/helm/valueFiles/-
-        value: $values/on-premises/gitlab/gitlab.values.dev.yaml
+        value: $values/on-premises/gitlab/gitlab.values.staging.yaml
     target:
       kind: Application
       name: gitlab

@@ -1,6 +1,6 @@
-# Prod-only: deploys Longhorn block storage via Helm.
+# Staging: deploys Longhorn block storage via Helm.
 # Must run before any on-premises app PVC is created (sync wave -1).
-# Not included in the dev overlay — shared-hostPath simulation handles storage in dev.
+# Pre-requisite: open-iscsi installed and iscsi_tcp loaded on all nodes (handled by cloud-init).
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -17,7 +17,6 @@ spec:
       helm:
         valueFiles:
           - $values/longhorn/longhorn.values.yaml
-          - $values/longhorn/longhorn.values.prod.yaml
     - repoURL: https://github.com/fhassis/k8s-cluster.git
       targetRevision: HEAD
       ref: values

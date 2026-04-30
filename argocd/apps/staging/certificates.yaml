@@ -1,5 +1,6 @@
-# Prod-only: applies Traefik TLSStore pointing to kube-system/wildcard-tls.
-# Pre-requisite: import the wildcard cert as a Secret before first sync (see certificates/README.md).
+# Staging: applies Traefik TLSStore pointing to kube-system/wildcard-tls.
+# Pre-requisite: generate a self-signed wildcard cert and load it as a Secret
+# before first sync (see clusters/multipass/README.md § TLS).
 # Wave -1 ensures TLSStore exists before any application Ingress is created.
 apiVersion: argoproj.io/v1alpha1
 kind: Application

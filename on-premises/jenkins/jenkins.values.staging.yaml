@@ -1,0 +1,24 @@
+# Jenkins staging overlay — *.staging domain, TLS, dev-level resource limits.
+
+controller:
+  jenkinsUrl: "https://jenkins.staging"
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hostName: jenkins.staging
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    tls:
+      - hosts:
+          - jenkins.staging
+        # secretName intentionally absent — Traefik uses TLSStore default (kube-system/wildcard-tls)
