@@ -3,8 +3,8 @@ kind: Kustomization
 resources:
   - ../base
   - longhorn.yaml                                      # prod: Longhorn block storage operator (wave -1)
-  - ../../on-premises/drawio/ingress.prod.yaml         # draw.io prod ingress (GitOps-managed)
-  - ../../on-premises/excalidraw/ingress.prod.yaml     # Excalidraw prod ingress (GitOps-managed)
+  - ../../../on-premises/drawio/ingress.prod.yaml         # draw.io prod ingress (GitOps-managed)
+  - ../../../on-premises/excalidraw/ingress.prod.yaml     # Excalidraw prod ingress (GitOps-managed)
 patches:
   # ingress-nginx: add prod TLS default cert overlay
   - patch: |-

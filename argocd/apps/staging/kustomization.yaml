@@ -3,8 +3,8 @@ kind: Kustomization
 resources:
   - ../base
   - longhorn.yaml                                        # staging: Longhorn block storage operator (wave -1)
-  - ../../on-premises/drawio/ingress.staging.yaml        # draw.io staging ingress (GitOps-managed)
-  - ../../on-premises/excalidraw/ingress.staging.yaml    # Excalidraw staging ingress (GitOps-managed)
+  - ../../../on-premises/drawio/ingress.staging.yaml        # draw.io staging ingress (GitOps-managed)
+  - ../../../on-premises/excalidraw/ingress.staging.yaml    # Excalidraw staging ingress (GitOps-managed)
 patches:
   # ingress-nginx: add staging TLS default cert overlay
   - patch: |-
