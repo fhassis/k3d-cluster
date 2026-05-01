@@ -23,6 +23,10 @@ options:
       - arg: "--disable=network-policy"
         nodeFilters:
           - server:*
+      # Disable built-in Traefik — ingress-nginx is used instead (see argocd/apps/base/ingress-nginx.yaml).
+      - arg: "--disable=traefik"
+        nodeFilters:
+          - server:*
   kubeconfig:
     updateDefaultKubeconfig: true
     switchCurrentContext: true

@@ -1,0 +1,12 @@
+controller:
+  # Allow location-snippets / server-snippets annotations so that per-ingress
+  # sub_filter directives can inject the Umami tracking script.
+  enableSnippets: true
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"

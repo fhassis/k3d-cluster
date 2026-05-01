@@ -1,0 +1,8 @@
+# Umami dev overlay — HTTP on umami.localhost
+
+ingress:
+  hosts:
+    - host: umami.localhost
+      paths:
+        - path: /
+          pathType: Prefix

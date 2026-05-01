@@ -3,7 +3,7 @@
 #
 # Pre-requisites (run before applying this file):
 #   1. Load the self-signed wildcard cert as a Secret:
-#      kubectl create secret tls wildcard-tls --cert=wildcard.crt --key=wildcard.key -n kube-system
+#      kubectl create secret tls ssl-certificate --cert=wildcard.crt --key=wildcard.key -n kube-system
 #   2. Install ArgoCD (see argocd/README.md)
 #
 # Usage:

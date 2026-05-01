@@ -1,14 +1,18 @@
-# draw.io prod ingress — HTTPS on drawio.fhassis.top via Traefik TLSStore default
+# draw.io prod ingress — HTTPS on drawio.fhassis.top via nginx default-ssl-certificate
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: drawio
   namespace: drawio
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
+    nginx.org/ssl-redirect: "true"
+    nginx.org/location-snippets: |
+      proxy_set_header Accept-Encoding "";
+      sub_filter '</head>' '<script async defer src="https://umami.fhassis.top/script.js" data-website-id="REPLACE_WITH_UUID"></script></head>';
+      sub_filter_once on;
+      sub_filter_types text/html;
 spec:
-  ingressClassName: traefik
+  ingressClassName: nginx
   rules:
     - host: drawio.fhassis.top
       http:
@@ -23,4 +27,4 @@ spec:
   tls:
     - hosts:
         - drawio.fhassis.top
-      # secretName intentionally absent — Traefik uses TLSStore default (kube-system/wildcard-tls)
+      # secretName intentionally absent — nginx uses default-ssl-certificate (kube-system/ssl-certificate)

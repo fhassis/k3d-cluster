@@ -1,0 +1,15 @@
+# Umami staging overlay — HTTPS on umami.staging
+# Note: Umami's own ingress intentionally has no sub_filter annotation — no circular tracking.
+
+ingress:
+  hosts:
+    - host: umami.staging
+      paths:
+        - path: /
+          pathType: Prefix
+  annotations:
+    nginx.org/ssl-redirect: "true"
+  tls:
+    - hosts:
+        - umami.staging
+      # secretName intentionally absent — nginx uses default-ssl-certificate (kube-system/ssl-certificate)

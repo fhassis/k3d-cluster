@@ -48,7 +48,7 @@ setAdminPassword:
 
 ingress:
   enabled: true
-  ingressClassName: traefik
+  ingressClassName: nginx
   # hostname overridden per environment
   hosts:
     - name: sonarqube.localhost

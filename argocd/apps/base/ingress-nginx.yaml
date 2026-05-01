@@ -1,0 +1,33 @@
+# ingress-nginx — replaces k3s built-in Traefik as the cluster ingress controller.
+# Traefik must be disabled on each k3s/k3d node before this Application is synced
+# (see clusters/k3d.yaml for dev and clusters/multipass/README.md for staging/prod).
+#
+# Wave -1 ensures the controller is running before any Application ingress is created.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: default
+  sources:
+    - repoURL: https://helm.nginx.com/stable
+      chart: nginx-ingress
+      targetRevision: "2.5.1"
+      helm:
+        valueFiles:
+          - $values/nginx-ingress/ingress-nginx.values.yaml
+    - repoURL: https://github.com/fhassis/k8s-cluster.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ingress-nginx
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

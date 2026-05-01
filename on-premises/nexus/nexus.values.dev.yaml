@@ -13,5 +13,3 @@ nexus:
 
 ingress:
   hostRepo: nexus.localhost
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web

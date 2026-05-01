@@ -2,9 +2,18 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base
-  - certificates.yaml   # prod-only: Traefik TLSStore default cert (wave -1)
-  - longhorn.yaml       # prod-only: Longhorn block storage operator (wave -1)
+  - longhorn.yaml                                      # prod: Longhorn block storage operator (wave -1)
+  - ../../on-premises/drawio/ingress.prod.yaml         # draw.io prod ingress (GitOps-managed)
+  - ../../on-premises/excalidraw/ingress.prod.yaml     # Excalidraw prod ingress (GitOps-managed)
 patches:
+  # ingress-nginx: add prod TLS default cert overlay
+  - patch: |-
+      - op: add
+        path: /spec/sources/0/helm/valueFiles/-
+        value: $values/nginx-ingress/ingress-nginx.values.prod.yaml
+    target:
+      kind: Application
+      name: ingress-nginx
   # Observability env-specific values
   - patch: |-
       - op: add
@@ -49,3 +58,10 @@ patches:
     target:
       kind: Application
       name: gitlab
+  - patch: |-
+      - op: add
+        path: /spec/sources/0/helm/valueFiles/-
+        value: $values/on-premises/umami/umami.values.prod.yaml
+    target:
+      kind: Application
+      name: umami

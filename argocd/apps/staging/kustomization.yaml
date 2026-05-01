@@ -2,9 +2,18 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base
-  - certificates.yaml   # staging: Traefik TLSStore (wildcard-tls must be pre-loaded)
-  - longhorn.yaml       # staging: Longhorn block storage operator (wave -1)
+  - longhorn.yaml                                        # staging: Longhorn block storage operator (wave -1)
+  - ../../on-premises/drawio/ingress.staging.yaml        # draw.io staging ingress (GitOps-managed)
+  - ../../on-premises/excalidraw/ingress.staging.yaml    # Excalidraw staging ingress (GitOps-managed)
 patches:
+  # ingress-nginx: add staging TLS default cert overlay
+  - patch: |-
+      - op: add
+        path: /spec/sources/0/helm/valueFiles/-
+        value: $values/nginx-ingress/ingress-nginx.values.staging.yaml
+    target:
+      kind: Application
+      name: ingress-nginx
   # Observability env-specific values
   - patch: |-
       - op: add
@@ -49,3 +58,10 @@ patches:
     target:
       kind: Application
       name: gitlab
+  - patch: |-
+      - op: add
+        path: /spec/sources/0/helm/valueFiles/-
+        value: $values/on-premises/umami/umami.values.staging.yaml
+    target:
+      kind: Application
+      name: umami

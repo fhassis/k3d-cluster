@@ -1,14 +1,18 @@
-# Excalidraw staging ingress — HTTPS on excalidraw.staging via Traefik TLSStore default
+# Excalidraw staging ingress — HTTPS on excalidraw.staging via nginx default-ssl-certificate
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: excalidraw
   namespace: excalidraw
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
+    nginx.org/ssl-redirect: "true"
+    nginx.org/location-snippets: |
+      proxy_set_header Accept-Encoding "";
+      sub_filter '</head>' '<script async defer src="https://umami.fhassis.top/script.js" data-website-id="REPLACE_WITH_UUID"></script></head>';
+      sub_filter_once on;
+      sub_filter_types text/html;
 spec:
-  ingressClassName: traefik
+  ingressClassName: nginx
   rules:
     - host: excalidraw.staging
       http:
@@ -23,4 +27,4 @@ spec:
   tls:
     - hosts:
         - excalidraw.staging
-      # secretName intentionally absent — Traefik uses TLSStore default (kube-system/wildcard-tls)
+      # secretName intentionally absent — nginx uses default-ssl-certificate (kube-system/ssl-certificate)

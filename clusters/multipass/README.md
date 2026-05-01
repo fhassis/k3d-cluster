@@ -10,6 +10,28 @@ Three-node k3s cluster on Ubuntu VMs for staging — drain tests, Longhorn, and 
 
 ## Create the cluster
 
+### 0. Disable Traefik in cloud-init
+
+k3s ships with Traefik as its default ingress. This cluster uses `ingress-nginx` instead. Before launching node1, edit `cloud-init-server.yaml` to pass `--disable=traefik` to the k3s server:
+
+```yaml
+# In cloud-init-server.yaml, under the k3s install command, add:
+--disable=traefik
+```
+
+Or append it to the `K3S_EXEC` / `INSTALL_K3S_EXEC` environment variable in the cloud-init file if that pattern is used. Disabling Traefik at install time is cleaner than removing it after the fact.
+
+If you are **migrating an existing cluster** that already has Traefik running:
+
+```bash
+# On node1 (server): add disable flag to k3s config, then restart
+multipass exec node1 -- sudo bash -c 'echo "disable: [traefik]" >> /etc/rancher/k3s/config.yaml'
+multipass exec node1 -- sudo systemctl restart k3s
+
+# Clean up Traefik HelmChart objects left behind
+kubectl -n kube-system delete helmchart traefik traefik-crd --ignore-not-found
+```
+
 ### 1. Launch node1 (server)
 
 ```bash
@@ -78,7 +100,7 @@ openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
   -subj "/CN=*.staging" \
   -addext "subjectAltName=DNS:*.staging,DNS:staging"
 
-kubectl create secret tls wildcard-tls \
+kubectl create secret tls ssl-certificate \
   --cert=wildcard.crt --key=wildcard.key \
   -n kube-system
 ```
@@ -90,6 +112,7 @@ Add to `C:\Windows\System32\drivers\etc\hosts` (replace with actual node1 IP):
 ```
 192.168.x.x   argocd.staging grafana.staging prometheus.staging loki.staging
 192.168.x.x   jenkins.staging nexus.staging xwiki.staging gitlab.staging
+192.168.x.x   sonarqube.staging drawio.staging excalidraw.staging umami.staging
 ```
 
 ## Install ArgoCD and bootstrap GitOps

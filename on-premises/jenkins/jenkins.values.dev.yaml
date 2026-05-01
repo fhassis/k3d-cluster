@@ -13,7 +13,5 @@ controller:
 
   ingress:
     enabled: true
-    ingressClassName: traefik
+    ingressClassName: nginx
     hostName: jenkins.localhost
-    annotations:
-      traefik.ingress.kubernetes.io/router.entrypoints: web

@@ -1,12 +1,11 @@
 ingress:
   enabled: true
-  ingressClassName: traefik
+  ingressClassName: nginx
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
+    nginx.org/ssl-redirect: "true"
   hosts:
     - grafana.fhassis.top
   tls:
     - hosts:
         - grafana.fhassis.top
-      # secretName intentionally absent — Traefik uses TLSStore default (kube-system/wildcard-tls)
+      # secretName intentionally absent — nginx uses default-ssl-certificate (kube-system/ssl-certificate)

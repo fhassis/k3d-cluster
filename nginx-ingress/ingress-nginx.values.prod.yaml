@@ -1,0 +1,6 @@
+# Prod overlay — serve kube-system/ssl-certificate as the default TLS certificate.
+# Pre-requisite: import the wildcard cert as a Secret before ArgoCD sync
+# (see certificates/README.md § Importing a certificate).
+controller:
+  defaultTLS:
+    secret: kube-system/ssl-certificate

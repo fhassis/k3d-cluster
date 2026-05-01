@@ -22,7 +22,7 @@ server:
   replicas: 1
   ingress:
     enabled: true
-    ingressClassName: traefik
+    ingressClassName: nginx
     hostname: argocd.localhost
 
 repoServer:

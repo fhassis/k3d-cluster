@@ -4,3 +4,4 @@ resources:
   - observability.yaml
   - hello-nestjs.yaml
   - on-premises.yaml
+  - ingress-nginx.yaml

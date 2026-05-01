@@ -1,0 +1,36 @@
+# Umami base values — christianhuth/umami chart (app v2.20.1).
+# PostgreSQL is deployed separately as release "umami-db" (see postgresql.values.yaml).
+# Release "umami-db" in namespace "umami" → service "umami-db-postgresql".
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  type: postgresql
+  hostname: umami-db-postgresql.umami.svc.cluster.local
+  port: 5432
+  auth:
+    database: umami
+    username: umami
+    password: umami
+
+umami:
+  # App secret used to sign session tokens. Override in prod via existingSecret.
+  appSecret:
+    secret: "change-me-in-prod-use-a-secret"
+  # Login is needed since this is a managed internal instance.
+  disableLogin: "0"
+  # Disable telemetry — we're self-hosted.
+  disableTelemetry: "1"
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+ingress:
+  enabled: true
+  className: nginx

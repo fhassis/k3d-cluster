@@ -18,7 +18,7 @@ nexus:
 
 ingress:
   enabled: true
-  ingressClassName: traefik
+  ingressClassName: nginx
   # hostname overridden per environment — chart uses hostRepo, not host
   hostRepo: nexus.localhost
 

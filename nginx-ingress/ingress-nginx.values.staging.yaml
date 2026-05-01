@@ -1,0 +1,6 @@
+# Staging overlay — serve kube-system/ssl-certificate as the default TLS certificate.
+# Pre-requisite: create the ssl-certificate Secret before ArgoCD sync
+# (see clusters/multipass/README.md § TLS pre-flight).
+controller:
+  defaultTLS:
+    secret: kube-system/ssl-certificate

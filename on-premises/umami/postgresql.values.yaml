@@ -1,0 +1,14 @@
+# PostgreSQL values for Umami — Bitnami chart.
+# Deployed as a separate release (umami-db) in the umami namespace.
+# Same pattern as sonarqube/postgresql.values.yaml.
+
+auth:
+  database: umami
+  username: umami
+  # Change in prod: create a Kubernetes Secret and reference via auth.existingSecret.
+  password: umami
+
+primary:
+  persistence:
+    storageClass: longhorn
+    size: 5Gi

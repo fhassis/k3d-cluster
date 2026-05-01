@@ -246,3 +246,65 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+# Umami DB — PostgreSQL backend for Umami analytics. Must be ready before umami.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: umami-db
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: postgresql
+      targetRevision: "16.6.3"
+      helm:
+        valueFiles:
+          - $values/on-premises/umami/postgresql.values.yaml
+    - repoURL: https://github.com/fhassis/k8s-cluster.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: umami
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Umami — web analytics dashboard. Depends on umami-db (same wave; DB starts first via pod readiness).
+# After first sync: log in, create a website entry, copy the UUID, and update the
+# configuration-snippet annotation in all on-prem ingress overlay files (see on-premises/umami/README.md).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: umami
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.christianhuth.de
+      chart: umami
+      targetRevision: "7.9.0"
+      helm:
+        valueFiles:
+          - $values/on-premises/umami/umami.values.yaml
+    - repoURL: https://github.com/fhassis/k8s-cluster.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: umami
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
