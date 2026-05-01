@@ -3,9 +3,33 @@ kind: Kustomization
 resources:
   - ../base
   - longhorn.yaml                                        # staging: Longhorn block storage operator (wave -1)
-  - ../../../on-premises/drawio/ingress.staging.yaml        # draw.io staging ingress (GitOps-managed)
-  - ../../../on-premises/excalidraw/ingress.staging.yaml    # Excalidraw staging ingress (GitOps-managed)
 patches:
+  # draw.io and Excalidraw: add env-specific ingress (with sub_filter) as second source.
+  # Keeps the ingress inside the app so the namespace exists before the ingress is applied.
+  - patch: |-
+      - op: add
+        path: /spec/sources/-
+        value:
+          repoURL: https://github.com/fhassis/k8s-cluster.git
+          targetRevision: HEAD
+          path: on-premises/drawio
+          directory:
+            include: "ingress.staging.yaml"
+    target:
+      kind: Application
+      name: drawio
+  - patch: |-
+      - op: add
+        path: /spec/sources/-
+        value:
+          repoURL: https://github.com/fhassis/k8s-cluster.git
+          targetRevision: HEAD
+          path: on-premises/excalidraw
+          directory:
+            include: "ingress.staging.yaml"
+    target:
+      kind: Application
+      name: excalidraw
   # ingress-nginx: add staging TLS default cert overlay
   - patch: |-
       - op: add
