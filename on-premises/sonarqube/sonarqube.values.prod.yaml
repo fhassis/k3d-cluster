@@ -1,0 +1,29 @@
+# SonarQube prod overlay — HTTPS on sonarqube.fhassis.top, larger resources, external PostgreSQL.
+
+resources:
+  requests:
+    cpu: "800m"
+    memory: "4Gi"
+  limits:
+    cpu: "4000m"
+    memory: "8Gi"
+
+ingress:
+  hosts:
+    - name: sonarqube.fhassis.top
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  tls:
+    - hosts:
+        - sonarqube.fhassis.top
+      # secretName intentionally absent — Traefik uses TLSStore default (kube-system/wildcard-tls)
+
+# Prod: override JDBC credentials via a Kubernetes Secret instead of plaintext.
+# Create: kubectl create secret generic sonarqube-jdbc -n sonarqube \
+#           --from-literal=password=<db-password> \
+#           --from-literal=currentPassword=<current-admin-password>
+# Then uncomment:
+# jdbcOverwrite:
+#   jdbcSecretName: sonarqube-jdbc
+#   jdbcSecretPasswordKey: password

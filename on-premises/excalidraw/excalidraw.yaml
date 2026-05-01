@@ -1,0 +1,51 @@
+# Excalidraw — Namespace, Deployment, Service.
+# No official Helm chart exists; managed as plain Kubernetes manifests.
+# Excalidraw is stateless — no persistent storage required.
+# Apply with: kubectl apply -f on-premises/excalidraw/excalidraw.yaml -f on-premises/excalidraw/ingress.<env>.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: excalidraw
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: excalidraw
+  namespace: excalidraw
+  labels:
+    app: excalidraw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: excalidraw
+  template:
+    metadata:
+      labels:
+        app: excalidraw
+    spec:
+      containers:
+        - name: excalidraw
+          image: excalidraw/excalidraw:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: excalidraw
+  namespace: excalidraw
+spec:
+  selector:
+    app: excalidraw
+  ports:
+    - port: 80
+      targetPort: 80

@@ -1,0 +1,54 @@
+# SonarQube Community Edition base values — SonarSource chart (2026.x).
+# Community Edition is free; no license key required.
+# Note: as of 2026.x the chart requires community.enabled=true (no longer edition: community).
+# Env-specific overlays add ingress hostname and (for prod) resource increases.
+#
+# PostgreSQL is deployed separately as release "sonarqube-db" (see postgresql.values.yaml).
+# The JDBC URL below assumes that release name in the sonarqube namespace.
+
+# Enable Community Build (free edition)
+community:
+  enabled: true
+
+jdbcOverwrite:
+  enabled: true
+  jdbcUrl: "jdbc:postgresql://sonarqube-db-postgresql:5432/sonarqube"
+  jdbcUsername: "sonarqube"
+  # Change in prod: use jdbcSecretName + jdbcSecretPasswordKey instead of plaintext.
+  jdbcPassword: "sonarqube"
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 10Gi
+
+# Required by the chart — used to protect /api/monitoring/metrics.
+# Change in prod: use monitoringPasscodeSecretName + monitoringPasscodeSecretKey instead.
+monitoringPasscode: "monitoringP@ssw0rd"
+
+# Prometheus metrics annotation — Alloy's annotationAutodiscovery will scrape /api/monitoring/metrics.
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "9000"
+  prometheus.io/path: "/api/monitoring/metrics"
+
+resources:
+  requests:
+    cpu: "400m"
+    memory: "2Gi"
+  limits:
+    cpu: "2000m"
+    memory: "4Gi"
+
+# Set a known admin password on first boot.
+# SonarQube requires: 12+ chars, uppercase, lowercase, digit, special char.
+setAdminPassword:
+  newPassword: "S0narQube@Dev!"
+  currentPassword: "admin"
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  # hostname overridden per environment
+  hosts:
+    - name: sonarqube.localhost

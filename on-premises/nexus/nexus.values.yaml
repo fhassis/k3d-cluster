@@ -19,8 +19,8 @@ nexus:
 ingress:
   enabled: true
   ingressClassName: traefik
-  # hostname overridden per environment
-  host: nexus.localhost
+  # hostname overridden per environment — chart uses hostRepo, not host
+  hostRepo: nexus.localhost
 
 # Docker registry hosted on Nexus (separate port/ingress in prod).
 # Disabled by default; enable and configure when registry is needed.

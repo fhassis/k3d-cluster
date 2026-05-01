@@ -17,6 +17,11 @@ Target environments:
 # Create (sets kubeconfig automatically)
 k3d cluster create --config clusters/k3d.yaml
 
+# Create the "longhorn" StorageClass alias (required once per cluster).
+# All Helm values files use storageClass: longhorn; this makes PVCs resolve
+# on k3d via the built-in local-path provisioner. See storage/longhorn-sc.yaml.
+kubectl apply -f storage/longhorn-sc.yaml
+
 # Delete
 k3d cluster delete dev
 ```

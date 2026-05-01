@@ -1,0 +1,36 @@
+# Dev-only StorageClass: "longhorn" → local-path provisioner
+#
+# WHY THIS EXISTS
+# ---------------
+# All Helm values files in this repo use storageClass: longhorn so that they work
+# in staging/prod without modification (where real Longhorn is installed).
+# k3d does not support Longhorn (requires open-iscsi and kernel modules unavailable
+# inside Docker containers), so PVCs requesting storageClass: longhorn would stay
+# Pending indefinitely on a fresh k3d cluster.
+#
+# This file creates a StorageClass named "longhorn" that delegates to k3d's built-in
+# rancher.io/local-path provisioner, making all PVC requests resolve automatically.
+#
+# TRADE-OFF vs THE SHARED-HOSTPATH SIMULATION
+# --------------------------------------------
+# The Longhorn README describes a fuller simulation using a shared ~/k3d-storage
+# directory mounted into every node (static PVs, no nodeAffinity) to replicate
+# Longhorn's drain-and-reattach behavior. This StorageClass alias is simpler:
+#   - No k3d.yaml volume mounts required
+#   - No static PV manifests needed per app
+# The downside: local-path PVs pin to the node where they were first created, so
+# pods cannot move between nodes after a drain. Acceptable for dev testing that is
+# NOT specifically validating node-drain behavior.
+#
+# WHEN TO APPLY
+# -------------
+# Once, immediately after `k3d cluster create --config clusters/k3d.yaml`, before
+# deploying any application that uses persistent storage (Jenkins, Nexus, SonarQube, …).
+# It is idempotent — safe to re-apply on an existing cluster.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn
+provisioner: rancher.io/local-path
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer

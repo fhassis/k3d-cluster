@@ -12,7 +12,7 @@ nexus:
       memory: "4Gi"
 
 ingress:
-  host: nexus.fhassis.top
+  hostRepo: nexus.fhassis.top
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"

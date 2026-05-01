@@ -1,0 +1,21 @@
+# draw.io dev ingress — HTTP on drawio.localhost (k3d port 8080 → cluster :80)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: drawio
+  namespace: drawio
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: drawio.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: drawio
+                port:
+                  number: 80

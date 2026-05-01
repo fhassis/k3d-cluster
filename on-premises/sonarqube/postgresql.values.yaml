@@ -1,0 +1,14 @@
+# PostgreSQL values for SonarQube — Bitnami chart.
+# Deployed as a separate release (sonarqube-db) in the sonarqube namespace.
+# SonarQube chart (2026.x) dropped the bundled PostgreSQL dependency.
+
+auth:
+  database: sonarqube
+  username: sonarqube
+  # Change in prod: create a Kubernetes Secret and reference via auth.existingSecret.
+  password: sonarqube
+
+primary:
+  persistence:
+    storageClass: longhorn
+    size: 10Gi

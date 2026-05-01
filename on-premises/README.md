@@ -10,6 +10,9 @@ This directory contains Helm values files and documentation for the four tools s
 | GitLab | `gitlab` | http://gitlab.localhost:8080 | https://gitlab.fhassis.top | `/metrics` (built-in) |
 | Nexus OSS | `nexus` | http://nexus.localhost:8080 | https://nexus.fhassis.top | `/service/metrics/prometheus` |
 | XWiki | `xwiki` | http://xwiki.localhost:8080 | https://xwiki.fhassis.top | None (JMX only) |
+| draw.io | `drawio` | http://drawio.localhost:8080 | https://drawio.fhassis.top | None (stateless) |
+| Excalidraw | `excalidraw` | http://excalidraw.localhost:8080 | https://excalidraw.fhassis.top | None (stateless) |
+| SonarQube | `sonarqube` | http://sonarqube.localhost:8080 | https://sonarqube.fhassis.top | `/api/monitoring/metrics` |
 
 For detailed documentation on each tool — chart choice, what is and is not configured, and production hardening notes — see the per-tool READMEs:
 
@@ -17,6 +20,9 @@ For detailed documentation on each tool — chart choice, what is and is not con
 - [GitLab →](gitlab/README.md)
 - [Nexus OSS →](nexus/README.md)
 - [XWiki →](xwiki/README.md)
+- [draw.io →](drawio/README.md)
+- [Excalidraw →](excalidraw/README.md)
+- [SonarQube →](sonarqube/README.md)
 
 ## Storage Strategy
 
@@ -38,7 +44,7 @@ Wave -1  →  dev-storage (dev) or longhorn (prod) — storage must exist first
 Wave  0  →  prometheus, loki, tempo
 Wave  1  →  grafana
 Wave  2  →  k8s-monitoring (Alloy)
-Wave  3  →  jenkins, nexus, xwiki
+Wave  3  →  jenkins, nexus, xwiki, drawio, excalidraw, sonarqube-db, sonarqube
 Wave  4  →  gitlab  (heaviest — starts last to reduce node pressure)
 ```
 
@@ -61,7 +67,10 @@ Wave  4  →  gitlab  (heaviest — starts last to reduce node pressure)
 | GitLab | ~6–8 GB | ~8–12 GB |
 | Nexus | ~1–2 GB | ~2–4 GB |
 | XWiki | ~1–2 GB | ~2–4 GB |
-| **Total** | **~9–14 GB** | **~14–24 GB** |
+| draw.io | ~256–512 MB | ~512 MB |
+| Excalidraw | ~128–256 MB | ~256 MB |
+| SonarQube | ~2–3 GB | ~4–8 GB |
+| **Total** | **~11–18 GB** | **~18–30 GB** |
 
 **Tip for dev**: if your machine has limited RAM, start with Jenkins and Nexus only for drain testing. GitLab can be deployed separately once the other tests are complete.
 

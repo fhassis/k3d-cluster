@@ -1,0 +1,51 @@
+# draw.io (diagrams.net) — Namespace, Deployment, Service.
+# No official Helm chart exists; managed as plain Kubernetes manifests.
+# draw.io is stateless — no persistent storage required.
+# Apply with: kubectl apply -f on-premises/drawio/drawio.yaml -f on-premises/drawio/ingress.<env>.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: drawio
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drawio
+  namespace: drawio
+  labels:
+    app: drawio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drawio
+  template:
+    metadata:
+      labels:
+        app: drawio
+    spec:
+      containers:
+        - name: drawio
+          image: jgraph/drawio:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drawio
+  namespace: drawio
+spec:
+  selector:
+    app: drawio
+  ports:
+    - port: 80
+      targetPort: 8080

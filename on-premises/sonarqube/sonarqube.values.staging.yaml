@@ -1,20 +1,12 @@
-# Nexus staging overlay — *.staging domain, TLS, dev-level resource limits.
-
-nexus:
-  resources:
-    requests:
-      cpu: "250m"
-      memory: "1Gi"
-    limits:
-      cpu: "1000m"
-      memory: "2Gi"
+# SonarQube staging overlay — HTTPS on sonarqube.staging via Traefik TLSStore default.
 
 ingress:
-  hostRepo: nexus.staging
+  hosts:
+    - name: sonarqube.staging
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
   tls:
     - hosts:
-        - nexus.staging
+        - sonarqube.staging
       # secretName intentionally absent — Traefik uses TLSStore default (kube-system/wildcard-tls)

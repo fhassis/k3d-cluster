@@ -1,0 +1,7 @@
+# SonarQube dev overlay — HTTP on sonarqube.localhost, reduced resources.
+
+ingress:
+  hosts:
+    - name: sonarqube.localhost
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web

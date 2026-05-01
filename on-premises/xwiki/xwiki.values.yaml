@@ -11,6 +11,10 @@ persistence:
   storageClass: longhorn
   size: 10Gi
 
+# Chart default enables MySQL; disable it so XWiki connects to PostgreSQL instead.
+mysql:
+  enabled: false
+
 postgresql:
   enabled: true
   auth:

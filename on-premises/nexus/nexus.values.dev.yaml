@@ -12,6 +12,6 @@ nexus:
       memory: "2Gi"
 
 ingress:
-  host: nexus.localhost
+  hostRepo: nexus.localhost
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
