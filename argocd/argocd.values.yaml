@@ -13,6 +13,10 @@ configs:
   cm:
     # Allow ArgoCD Applications to live in any namespace (not only argocd).
     application.namespaces: "*"
+    # Allow kustomize resources to reference files outside the kustomization root.
+    # Required for staging/prod overlays that reference on-premises ingress manifests
+    # via ../../../ relative paths.
+    kustomize.buildOptions: "--load-restrictor LoadRestrictionsNone"
 
 # Disable SSO — use the auto-generated admin password for local dev.
 dex:
