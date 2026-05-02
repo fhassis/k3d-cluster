@@ -3,6 +3,11 @@ ingress:
   ingressClassName: nginx
   annotations:
     nginx.org/ssl-redirect: "true"
+    nginx.org/location-snippets: |
+      proxy_set_header Accept-Encoding "";
+      sub_filter '</head>' '<script async defer src="https://umami.fhassis.top/script.js" data-website-id="REPLACE_WITH_UUID"></script></head>';
+      sub_filter_once on;
+      sub_filter_types text/html;
   hosts:
     - grafana.fhassis.top
   tls:
